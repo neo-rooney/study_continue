@@ -55,6 +55,13 @@ const App = () => {
     });
   }, []);
 
+  React.useEffect(() => {
+    const chatContainer = document.getElementById("chat-container");
+    if (chatContainer) {
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+  }, [chatLog]);
+
   return (
     <div
       style={{
@@ -67,7 +74,10 @@ const App = () => {
       }}
     >
       <h1>Study Continue</h1>
-      <div style={{ flexGrow: 1, overflowY: "auto", marginBottom: "16px" }}>
+      <div
+        id="chat-container"
+        style={{ flexGrow: 1, overflowY: "auto", marginBottom: "16px" }}
+      >
         {chatLog.map((msg, index) => (
           <div
             key={index}
