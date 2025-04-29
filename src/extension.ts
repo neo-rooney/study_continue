@@ -1,26 +1,42 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 
-// This method is called when your extension is activated
-// Your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
-
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
 	console.log('Congratulations, your extension "study-continue" is now active!');
-
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json
 	const disposable = vscode.commands.registerCommand('study-continue.helloWorld', () => {
-		// The code you place here will be executed every time your command is executed
-		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World from study_continue!');
+		const panel = vscode.window.createWebviewPanel(
+			'studyContinueWebview',      // internal ID (아무렇게나, 고유하면 됨)
+			'Study Continue',            // 탭 제목
+			vscode.ViewColumn.One,       // 열 위치
+			{
+				enableScripts:true
+			}                           // Webview 옵션 (지금은 비어둠)
+		);
+		// Webview에 표시할 HTML 내용 설정
+		panel.webview.html = getWebviewContent(panel.webview, context.extensionUri);
 	});
 
 	context.subscriptions.push(disposable);
 }
 
-// This method is called when your extension is deactivated
+function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.Uri) {
+	const scriptUri = webview.asWebviewUri(
+	  vscode.Uri.joinPath(extensionUri, 'media', 'webview.js')
+	);
+  
+	return `
+	  <!DOCTYPE html>
+	  <html lang="en">
+	  <head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Study Continue</title>
+	  </head>
+	  <body>
+		<div id="root"></div>
+		<script src="${scriptUri}"></script>
+	  </body>
+	  </html>
+	`;
+  }
+
 export function deactivate() {}
